@@ -16,11 +16,41 @@
 .circle:hover {
   stroke: black;
 }
+
+/*Legend specific*/
+.legend {
+  padding: 6px 8px;
+  font: 14px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
+  /*border-radius: 5px;*/
+  line-height: 24px;
+  color: #555;
+}
+.legend h4 {
+  text-align: center;
+  font-size: 16px;
+  margin: 2px 12px 8px;
+  color: #777;
+}
+
+.legend span {
+  position: relative;
+  bottom: 3px;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin: 0 8px 0 0;
+  opacity: 0.7;
+}
 </style>
-  
 </head>
 <body>
-  <!-- Create an element where the map will take place -->
+<!-- Create an element where the map will take place -->
 <div id="mapid"></div>
 <script>
     // mapid is the id of the div where the map will appear
@@ -29,38 +59,38 @@
       .setView([39.113014, -105.358887], 5);   // center position + zoom
     
     // Tile type: openstreetmap normal
-    var openstreetmap = L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-      maxZoom: 6
-    })
+var openstreetmap = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+  maxZoom: 6
+})
 
-    // Tile type: openstreetmap Hot
-    var openstreetmapHot = L.tileLayer(
-      'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-      maxZoom: 6
-    })
+// Tile type: openstreetmap Hot
+var openstreetmapHot = L.tileLayer(
+  'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+  maxZoom: 6
+})
 
-    // Tile type: openstreetmap Osm
-    var openstreetmapOsm = L.tileLayer(
-      'http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-      maxZoom: 1400000
-    })
+// Tile type: openstreetmap Osm
+var openstreetmapOsm = L.tileLayer(
+  'http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+  maxZoom: 1400000
+})
 
-    //Base layers definition and addition
-    var allOptions = {
-      "Open streetmap": openstreetmap,
-      "Open streetmap: Hot": openstreetmapHot,
-      "Open streetmap: Osm": openstreetmapOsm
-    };
+//Base layers definition and addition
+var allOptions = {
+	"Open streetmap": openstreetmap,
+  "Open streetmap: Hot": openstreetmapHot,
+  "Open streetmap: Osm": openstreetmapOsm
+};
 
-    // Initialize with openstreetmap
-    openstreetmap.addTo(map);
-  
-    // Add baseLayers to map as control layers
-    L.control.layers(allOptions).addTo(map);
+// Initialize with openstreetmap
+openstreetmap.addTo(map);
+
+// Add baseLayers to map as control layers
+L.control.layers(allOptions).addTo(map);
 
     var markers = []
     d3.csv("https://raw.githubusercontent.com/DelusionArun/Testing_CSV/main/governor_shooting_merged.csv", function(data) {
@@ -87,10 +117,22 @@
                 stroke: false,
                 radius: size(count)
             }).addTo(map);
-           
+      
             circle.bindPopup(markers[i].city + " | Total Shootings: " + count);
         }
-        
+
+        var legend = L.control({ position: "bottomleft" });
+
+        legend.onAdd = function(map) {
+          var div = L.DomUtil.create("div", "legend");
+          div.innerHTML += "<h4>Party Affiliation</h4>";
+          div.innerHTML += '<i style="background: #FF0000"></i><span>Republicans</span><br>';
+          div.innerHTML += '<i style="background: #0000FF"></i><span>Democrats</span><br>';
+          div.innerHTML += '<i style="background: #FFA500"></i><span>Independents</span><br>';
+          return div;
+        };
+
+        legend.addTo(map);
     });
 
 </script>
